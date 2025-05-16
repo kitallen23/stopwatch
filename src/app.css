@@ -2,13 +2,50 @@
 @plugin "daisyui" {
     themes:
         light --default,
-        business --prefersdark;
+        luxury --prefersdark,
+        dark,
+        cupcake,
+        bumblebee,
+        emerald,
+        corporate,
+        synthwave,
+        retro,
+        cyberpunk,
+        valentine,
+        halloween,
+        garden,
+        forest,
+        aqua,
+        lofi,
+        pastel,
+        fantasy,
+        wireframe,
+        black,
+        luxury,
+        dracula,
+        cmyk,
+        autumn,
+        business,
+        acid,
+        lemonade,
+        night,
+        coffee,
+        winter,
+        dim,
+        nord,
+        sunset,
+        caramellate,
+        abyss,
+        silk;
 }
 
 :root {
-    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
+    font-family: "Noto Sans Mono", monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
     font-weight: 400;
+    line-height: 1.5;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
