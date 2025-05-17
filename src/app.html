@@ -13,6 +13,21 @@
             rel="stylesheet"
         />
 
+        <script>
+            // IIFE to avoid polluting the global scope
+            (function () {
+                try {
+                    const theme = localStorage.getItem("stopwatch-theme");
+                    if (theme) {
+                        document.documentElement.setAttribute("data-theme", theme);
+                    }
+                } catch (e) {
+                    // localStorage can be unavailable (e.g., private browsing mode)
+                    console.error("Could not set theme from localStorage", e);
+                }
+            })();
+        </script>
+
         %sveltekit.head%
     </head>
     <body data-sveltekit-preload-data="hover">
