@@ -13,8 +13,14 @@
         notes: string;
     }
 
-    let { toggle, reset, currentTimeDisplay, isTimerActive, animationKey, notes }: TimerProps =
-        $props();
+    let {
+        toggle,
+        reset,
+        currentTimeDisplay,
+        isTimerActive,
+        animationKey,
+        notes = $bindable(),
+    }: TimerProps = $props();
 
     // Internal state for visuals
     const indicatorSize = "1.25rem";

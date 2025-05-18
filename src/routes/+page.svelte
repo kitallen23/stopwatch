@@ -3,15 +3,24 @@
     import Timer from "$lib/components/Timer.svelte";
 
     let activeStartTime: number | null = $state(null); // Timestamp (ms) when the current active segment started
-    let timerInterval: number | undefined = $state(); // Stores the interval ID
     let currentTimeDisplay: string = $state("0.00"); // Formatted time for display
 
-    let timerEntry: TimerEntry = $state({
+    // Stores the animation frame ID - note that this must not use $state, as we don't want svelte
+    // to update based on this value changing
+    let animationFrameId: number | null = null;
+
+    const BLANK_TIMER_ENTRY = {
         id: "",
         notes: "",
         times: [],
         createdAt: null,
-    });
+    };
+
+    function blankTimerEntry() {
+        return { ...BLANK_TIMER_ENTRY, id: "" };
+    }
+
+    let timerEntry: TimerEntry = $state(blankTimerEntry());
     let isTimerActive: boolean = $state(false);
     let animationKey: number = $state(0);
 
@@ -54,6 +63,31 @@
         return `${formattedSecondsShort}.${formattedHundredths}`;
     }
 
+    /**
+     * The main loop for updating the timer display using requestAnimationFrame.
+     * This function is called by the browser just before the next screen repaint
+     * when the timer is active.
+     */
+    function runTimerLoop() {
+        // Recalculate the total elapsed time and format it for display.
+        // This ensures the displayed time is always up-to-date for the current frame.
+        currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
+
+        // Check if the timer is still supposed to be active.
+        // This acts as a condition to continue the animation loop.
+        if (isTimerActive) {
+            // If the timer is active, request that the browser calls `runTimerLoop` again before
+            // the next screen repaint.
+            // This creates a recursive loop that synchronizes with the browser's refresh rate,
+            // leading to smooth updates.
+            // The returned ID is stored in `animationFrameId` so that this specific pending request
+            // can be cancelled if the timer is stopped or reset.
+            animationFrameId = requestAnimationFrame(runTimerLoop);
+        }
+        // If `isTimerActive` is false (e.g., the timer was stopped), `requestAnimationFrame` is not
+        // called, and the loop naturally terminates.
+    }
+
     function handleTimerToggle() {
         isTimerActive = !isTimerActive;
 
@@ -64,18 +98,21 @@
                 // Set createdAt on first start of an entry
                 timerEntry.createdAt = activeStartTime;
             }
-            timerInterval = setInterval(() => {
-                currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
-            }, 100); // Update display every 100ms
+            // Start the animation frame loop
+            runTimerLoop();
         } else {
             // Stopping the timer
             if (activeStartTime) {
                 timerEntry.times.push([activeStartTime, Date.now()]);
                 activeStartTime = null;
             }
-            clearInterval(timerInterval);
 
-            timerInterval = undefined;
+            // Cancel the animation frame loop if active
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+
             // Update display one last time to show the exact stop time
             currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
         }
@@ -92,13 +129,18 @@
             }
         }
 
-        clearInterval(timerInterval);
-        timerInterval = undefined;
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
+        if (timerEntry && timerEntry.times.length > 0) {
+            console.info(`Adding timer entry: `, timerEntry);
+        }
+
+        timerEntry = blankTimerEntry();
         isTimerActive = false;
         activeStartTime = null;
-        timerEntry.times = [];
-        timerEntry.createdAt = null;
-        timerEntry.notes = "";
         currentTimeDisplay = formatTime(0);
         animationKey++;
     }
@@ -109,8 +151,8 @@
         {currentTimeDisplay}
         {isTimerActive}
         {animationKey}
+        bind:notes={timerEntry.notes}
         toggle={handleTimerToggle}
         reset={handleTimerReset}
-        notes={timerEntry.notes}
     />
 </div>
