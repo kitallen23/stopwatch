@@ -4,4 +4,4 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # pnpm
-pnpm exec lint-staged
+pnpm lint-staged

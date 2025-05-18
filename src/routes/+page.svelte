@@ -137,8 +137,7 @@
         if (timerEntry && timerEntry.times.length > 0) {
             console.info(`Adding timer entry: `, timerEntry);
         }
-        console.log("something");
-        console.log("something again");
+        console.log("Test console log");
 
         timerEntry = blankTimerEntry();
         isTimerActive = false;

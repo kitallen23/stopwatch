@@ -20,7 +20,7 @@ export default ts.config(
         languageOptions: {
             globals: { ...globals.browser, ...globals.node },
         },
-        rules: { "no-undef": "off", "no-console": "warn" },
+        rules: { "no-undef": "off", "no-console": ["warn", { allow: ["warn", "error", "info"] }] },
     },
     {
         files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],

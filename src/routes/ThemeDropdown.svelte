@@ -38,7 +38,7 @@
     <div class="dropdown-content bg-base-300 rounded-box z-1 mt-2 w-52 shadow-2xl">
         <ul class="menu w-52">
             <h2 class="menu-title">theme</h2>
-            {#each themes as theme}
+            {#each themes as theme (theme)}
                 <li>
                     <button
                         name="theme-dropdown"
