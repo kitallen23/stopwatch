@@ -138,6 +138,7 @@
             console.info(`Adding timer entry: `, timerEntry);
         }
         console.log("something");
+        console.log("something again");
 
         timerEntry = blankTimerEntry();
         isTimerActive = false;
