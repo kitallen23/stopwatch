@@ -1,94 +1,116 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import type { TimerEntry } from "$lib/types/timer.types";
+    import Timer from "$lib/components/Timer.svelte";
 
-    let indicatorSize = "1.25rem";
-    let lineWidthFactor = "3";
-    let rotationSpeed = "4s";
-    // This variable will be dynamically set based on container height
-    let containerCenterY = "0px";
+    let activeStartTime: number | null = $state(null); // Timestamp (ms) when the current active segment started
+    let timerInterval: number | undefined = $state(); // Stores the interval ID
+    let currentTimeDisplay: string = $state("0.00"); // Formatted time for display
 
-    onMount(() => {
-        const containerElement = document.querySelector(".timer-container") as HTMLElement;
-        const indicatorElement = document.querySelector(".timer-indicator") as HTMLElement;
-
-        if (containerElement && indicatorElement) {
-            const updateIndicatorTransformOrigin = () => {
-                const containerHeight = containerElement.offsetHeight;
-                containerCenterY = `${containerHeight / 2}px`;
-            };
-
-            // Initial setup
-            updateIndicatorTransformOrigin();
-
-            // Observe container size changes
-            const resizeObserver = new ResizeObserver(updateIndicatorTransformOrigin);
-            resizeObserver.observe(containerElement);
-
-            // Cleanup observer when component is destroyed
-            return () => {
-                resizeObserver.disconnect();
-            };
-        }
+    let timerEntry: TimerEntry = $state({
+        id: "",
+        notes: "",
+        times: [],
+        createdAt: null,
     });
+    let isTimerActive: boolean = $state(false);
+    let animationKey: number = $state(0);
+
+    /**
+     * Calculates the total elapsed time in milliseconds.
+     * @returns {number} Total elapsed time in milliseconds.
+     */
+    function calculateTotalElapsedTimeMs(): number {
+        let totalMs = 0;
+        // Sum duration of all completed segments
+        for (const segment of timerEntry.times) {
+            totalMs += segment[1] - segment[0];
+        }
+        // If timer is currently active, add time from current segment
+        if (activeStartTime) {
+            totalMs += Date.now() - activeStartTime;
+        }
+        return totalMs;
+    }
+
+    /**
+     * Formats milliseconds into MM:SS.ss format.
+     * @param {number} ms - The total elapsed time in milliseconds.
+     * @returns {string} The formatted time string.
+     */
+    function formatTime(ms: number): string {
+        const totalSeconds = ms / 1000;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const hundredths = Math.floor((seconds * 100) % 100);
+
+        const formattedMinutes = String(minutes);
+        const formattedSecondsShort = String(Math.floor(seconds));
+        const formattedSecondsLong = String(Math.floor(seconds)).padStart(2, "0");
+        const formattedHundredths = String(hundredths).padStart(2, "0");
+
+        if (minutes > 0) {
+            return `${formattedMinutes}:${formattedSecondsLong}.${formattedHundredths}`;
+        }
+        return `${formattedSecondsShort}.${formattedHundredths}`;
+    }
+
+    function handleTimerToggle() {
+        isTimerActive = !isTimerActive;
+
+        if (isTimerActive) {
+            // Starting the timer
+            activeStartTime = Date.now();
+            if (!timerEntry.createdAt) {
+                // Set createdAt on first start of an entry
+                timerEntry.createdAt = activeStartTime;
+            }
+            timerInterval = setInterval(() => {
+                currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
+            }, 100); // Update display every 100ms
+        } else {
+            // Stopping the timer
+            if (activeStartTime) {
+                timerEntry.times.push([activeStartTime, Date.now()]);
+                activeStartTime = null;
+            }
+            clearInterval(timerInterval);
+
+            timerInterval = undefined;
+            // Update display one last time to show the exact stop time
+            currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
+        }
+    }
+
+    /**
+     * Resets the timer animation to its starting position and pauses it.
+     */
+    function handleTimerReset() {
+        if (isTimerActive) {
+            // If timer is active, stop it first to save the current segment
+            if (activeStartTime) {
+                timerEntry.times.push([activeStartTime, Date.now()]);
+            }
+        }
+
+        clearInterval(timerInterval);
+        timerInterval = undefined;
+        isTimerActive = false;
+        activeStartTime = null;
+        timerEntry.times = [];
+        timerEntry.createdAt = null;
+        timerEntry.notes = "";
+        currentTimeDisplay = formatTime(0);
+        animationKey++;
+    }
 </script>
 
 <div class="mx-auto mt-8 w-full max-w-4xl px-4">
-    <div class="card mx-auto max-w-sm">
-        <div class="card-body">
-            <div
-                class="timer-container aspect-square"
-                style="--indicator-size: {indicatorSize}; --rotation-speed: {rotationSpeed}; --container-center-y: {containerCenterY}; --line-width-factor: {lineWidthFactor}"
-            >
-                <div class="timer-circle"></div>
-                <div class="timer-indicator shadow-md"></div>
-            </div>
-        </div>
-    </div>
+    <Timer
+        {currentTimeDisplay}
+        {isTimerActive}
+        {animationKey}
+        toggle={handleTimerToggle}
+        reset={handleTimerReset}
+        notes={timerEntry.notes}
+    />
 </div>
-
-<style>
-    .timer-container {
-        position: relative;
-        overflow: hidden;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .timer-circle {
-        position: relative;
-        height: calc(
-            100% - (var(--indicator-size) - var(--indicator-size) / var(--line-width-factor))
-        );
-        width: calc(
-            100% - (var(--indicator-size) - var(--indicator-size) / var(--line-width-factor))
-        );
-        border-radius: 50%;
-        border: calc(var(--indicator-size) / var(--line-width-factor)) solid var(--color-primary);
-        opacity: 0.25;
-    }
-
-    .timer-indicator {
-        position: absolute;
-        width: var(--indicator-size);
-        height: var(--indicator-size);
-        background-color: var(--color-primary);
-        border-radius: 50%;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        transform-origin: calc(var(--indicator-size) / 2) var(--container-center-y);
-        animation: rotateClockwise var(--rotation-speed) linear infinite;
-        /* animation: rotateClockwise var(--rotation-speed) linear; */
-    }
-
-    @keyframes rotateClockwise {
-        from {
-            transform: translateX(-50%) rotate(0deg);
-        }
-        to {
-            transform: translateX(-50%) rotate(360deg);
-        }
-    }
-</style>

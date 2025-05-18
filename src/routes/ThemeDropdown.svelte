@@ -2,7 +2,7 @@
     import { browser } from "$app/environment";
     import { themes } from "$lib";
     import ThemeIndicator from "$lib/components/ThemeIndicator.svelte";
-    import { LOCAL_STORAGE_KEYS } from "$lib/config/ constants";
+    import { LOCAL_STORAGE_KEYS } from "$lib/config/constants";
     import KeyboardArrowDown from "virtual:icons/material-symbols-light/keyboard-arrow-down";
     import CheckCircle from "virtual:icons/material-symbols/check-circle";
 
