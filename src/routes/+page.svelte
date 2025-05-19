@@ -8,6 +8,7 @@
     // Stores the animation frame ID - note that this must not use $state, as we don't want svelte
     // to update based on this value changing
     let animationFrameId: number | null = null;
+    let lastUpdateTime: number = 0; // Timestamp of the last display update
 
     const BLANK_TIMER_ENTRY = {
         id: "",
@@ -69,9 +70,15 @@
      * when the timer is active.
      */
     function runTimerLoop() {
-        // Recalculate the total elapsed time and format it for display.
-        // This ensures the displayed time is always up-to-date for the current frame.
-        currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
+        const now = Date.now();
+
+        // Check if 10ms has passed since our last update
+        if (now - lastUpdateTime >= 10) {
+            // Recalculate the total elapsed time and format it for display.
+            // This ensures the displayed time is always up-to-date for the current frame.
+            currentTimeDisplay = formatTime(calculateTotalElapsedTimeMs());
+            lastUpdateTime = now; // Set the last update time
+        }
 
         // Check if the timer is still supposed to be active.
         // This acts as a condition to continue the animation loop.
@@ -142,6 +149,7 @@
         isTimerActive = false;
         activeStartTime = null;
         currentTimeDisplay = formatTime(0);
+        lastUpdateTime = 0;
         animationKey++;
     }
 </script>

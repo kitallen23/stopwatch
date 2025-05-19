@@ -75,7 +75,10 @@
         <button class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`} onclick={reset}>
             <Refresh />
         </button>
-        <textarea class="textarea col-span-2 h-10 min-h-10" placeholder="notes" bind:value={notes}
+        <textarea
+            class={`textarea col-span-2 h-10 min-h-10 ${isTimerActive ? "textarea-secondary" : "textarea-primary"}`}
+            placeholder="notes"
+            bind:value={notes}
         ></textarea>
     </div>
 </div>
