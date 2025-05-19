@@ -58,7 +58,9 @@
     >
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <div class="timer-circle cursor-pointer" onclick={toggle}></div>
-        <div class="timer-time pointer-events-none text-4xl sm:text-5xl">
+        <div
+            class={`timer-time pointer-events-none sm:text-5xl ${currentTimeDisplay.length >= 8 ? "text-4xl" : "text-5xl"}`}
+        >
             {currentTimeDisplay}
         </div>
         {#key animationKey}
