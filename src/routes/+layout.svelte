@@ -1,10 +1,11 @@
 <script lang="ts">
     import "../app.css";
     import Timer from "virtual:icons/material-symbols/timer";
-    import Flower from "virtual:icons/material-symbols/local-florist";
-    import FlowerOutline from "virtual:icons/material-symbols/local-florist-outline";
+    import YinYang from "virtual:icons/mdi/yin-yang";
+    import Github from "virtual:icons/mdi/github";
     import ThemeDropdown from "./ThemeDropdown.svelte";
     import { zenMode } from "$lib/stores/zenMode";
+    import { GITHUB_REPO_URL, GITHUB_USER_URL } from "$lib/config/constants";
 
     let { children } = $props();
 
@@ -19,13 +20,13 @@
         <div class="flex items-center justify-end gap-2">
             {#if $zenMode}
                 <button class="btn btn-ghost btn-sm text-base-content/50" onclick={toggleZenMode}
-                    ><span class="hidden sm:inline">zen mode: on </span><Flower
+                    ><span class="hidden sm:inline">zen mode: on </span><YinYang
                         class="text-primary"
                     /></button
                 >
             {:else}
                 <button class="btn btn-ghost btn-sm text-base-content/50" onclick={toggleZenMode}
-                    ><FlowerOutline /></button
+                    ><YinYang /></button
                 >
             {/if}
             <ThemeDropdown />
@@ -36,6 +37,27 @@
 <main class="pt-10">
     {@render children()}
 </main>
+
+<footer class="footer bg-base-200 text-base-content/50 place-items-end p-1">
+    <aside>
+        <div class="flex items-center justify-end gap-2 text-xs">
+            <span
+                >made by <a
+                    class="link link-hover"
+                    href={GITHUB_USER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer">@kitallen23</a
+                ></span
+            >
+            <a
+                class="btn btn-ghost btn-xs"
+                href={GITHUB_REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"><Github /></a
+            >
+        </div>
+    </aside>
+</footer>
 
 <style>
     header {
