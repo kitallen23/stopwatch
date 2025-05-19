@@ -1,3 +1,5 @@
+export const APP_VERSION = "0.1.0";
+
 const LOCAL_STORAGE_PREFIX = "stopwatch";
 export const LOCAL_STORAGE_KEYS = {
     theme: `${LOCAL_STORAGE_PREFIX}-theme`,

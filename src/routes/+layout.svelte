@@ -5,7 +5,7 @@
     import Github from "virtual:icons/mdi/github";
     import ThemeDropdown from "./ThemeDropdown.svelte";
     import { zenMode } from "$lib/stores/zenMode";
-    import { GITHUB_REPO_URL, GITHUB_USER_URL } from "$lib/config/constants";
+    import { APP_VERSION, GITHUB_REPO_URL, GITHUB_USER_URL } from "$lib/config/constants";
 
     let { children } = $props();
 
@@ -38,23 +38,26 @@
     {@render children()}
 </main>
 
-<footer class="footer bg-base-200 text-base-content/50 place-items-end p-1">
-    <aside>
-        <div class="flex items-center justify-end gap-2 text-xs">
-            <span
-                >made by <a
-                    class="link link-hover"
-                    href={GITHUB_USER_URL}
+<footer class="footer bg-base-200 text-base-content/50 place-items-end px-2 py-1">
+    <aside class="w-full">
+        <div class="flex w-full items-center justify-between gap-2 text-xs">
+            <span>app v{APP_VERSION}</span>
+            <div class="flex items-center">
+                <span
+                    >made by <a
+                        class="link link-hover"
+                        href={GITHUB_USER_URL}
+                        target="_blank"
+                        rel="noopener noreferrer">@kitallen23</a
+                    ></span
+                >
+                <a
+                    class="btn btn-ghost btn-xs"
+                    href={GITHUB_REPO_URL}
                     target="_blank"
-                    rel="noopener noreferrer">@kitallen23</a
-                ></span
-            >
-            <a
-                class="btn btn-ghost btn-xs"
-                href={GITHUB_REPO_URL}
-                target="_blank"
-                rel="noopener noreferrer"><Github /></a
-            >
+                    rel="noopener noreferrer"><Github /></a
+                >
+            </div>
         </div>
     </aside>
 </footer>
