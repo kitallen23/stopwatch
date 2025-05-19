@@ -1,6 +1,4 @@
 <script lang="ts">
-    // eslint-disable-next-line svelte/valid-prop-names-in-kit-pages
-    export const prerender = true;
     import "../app.css";
     import Timer from "virtual:icons/material-symbols/timer";
     import ThemeDropdown from "./ThemeDropdown.svelte";
