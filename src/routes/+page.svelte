@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { TimerEntry } from "$lib/types/timer.types";
     import Timer from "$lib/components/Timer.svelte";
+    import { nanoid } from "nanoid";
 
     let activeStartTime: number | null = $state(null); // Timestamp (ms) when the current active segment started
     let currentTimeDisplay: string = $state("0.00"); // Formatted time for display
@@ -18,7 +19,7 @@
     };
 
     function blankTimerEntry() {
-        return { ...BLANK_TIMER_ENTRY, id: "" };
+        return { ...BLANK_TIMER_ENTRY, id: nanoid(8) };
     }
 
     let timerEntry: TimerEntry = $state(blankTimerEntry());

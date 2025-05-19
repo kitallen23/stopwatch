@@ -50,4 +50,26 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    --real-viewport-height: 100%;
+}
+
+@supports (height: 100dvh) {
+    :root {
+        --real-viewport-height: 100dvh;
+    }
+}
+html {
+    height: var(--real-viewport-height);
+}
+body {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: var(--real-viewport-height);
+}
+
+@layer base {
+    html {
+        @apply text-lg sm:text-base;
+    }
 }
