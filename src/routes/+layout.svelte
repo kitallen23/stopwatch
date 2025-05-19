@@ -8,7 +8,7 @@
 
 <header class="bg-base-200 fixed top-0 right-0 w-full">
     <div class="mx-auto flex h-10 w-full max-w-4xl items-center justify-between px-4">
-        <a href="/" class="app-title flex items-center gap-1"><Timer />stopwatch.</a>
+        <a href="/" class="app-title flex items-center gap-1 text-lg"><Timer />stopwatch.</a>
         <ThemeDropdown />
     </div>
 </header>
@@ -20,10 +20,5 @@
 <style>
     header {
         z-index: 1;
-    }
-
-    .app-title {
-        font-family: monospace;
-        font-size: 1rem;
     }
 </style>

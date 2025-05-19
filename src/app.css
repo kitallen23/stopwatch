@@ -51,3 +51,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+@layer base {
+    html {
+        @apply text-lg sm:text-base;
+    }
+}
