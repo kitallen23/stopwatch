@@ -40,7 +40,7 @@
 
 <footer class="footer bg-base-200 text-base-content/50 place-items-end px-2 py-1">
     <aside class="w-full">
-        <div class="flex w-full items-center justify-between gap-2 text-xs">
+        <div class="mx-auto flex w-full max-w-4xl items-center justify-end gap-10 text-xs">
             <span>app v{APP_VERSION}</span>
             <div class="flex items-center">
                 <span
