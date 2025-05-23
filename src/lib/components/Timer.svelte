@@ -78,10 +78,18 @@
         {/key}
     </div>
     <div class="mx-auto grid w-full max-w-64 grid-cols-2 gap-x-2 gap-y-4">
-        <button class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`} onclick={toggle}>
+        <button
+            class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`}
+            onclick={toggle}
+            aria-label={isTimerActive ? "Pause Timer" : "Start Timer"}
+        >
             {#if isTimerActive}<Pause />{:else}<PlayArrow />{/if}
         </button>
-        <button class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`} onclick={reset}>
+        <button
+            class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`}
+            onclick={reset}
+            aria-label="Reset Timer"
+        >
             <Refresh />
         </button>
         <textarea

@@ -16,17 +16,25 @@
 
 <header class="bg-base-200 fixed top-0 right-0 w-full">
     <div class="mx-auto flex h-10 w-full max-w-2xl items-center justify-between gap-2 px-4">
-        <a href="/" class="app-title flex items-center gap-1 text-lg"><Timer />stopwatch.</a>
+        <a href="/" class="app-title flex items-center gap-1 text-lg"
+            ><Timer aria-hidden="true" />stopwatch.</a
+        >
         <div class="flex items-center justify-end gap-2">
             {#if $zenMode}
-                <button class="btn btn-ghost btn-sm text-base-content/50" onclick={toggleZenMode}
+                <button
+                    class="btn btn-ghost btn-sm text-base-content/50"
+                    onclick={toggleZenMode}
+                    aria-label="Toggle zen mode"
                     ><span class="hidden sm:inline">zen mode: on </span><YinYang
                         class="text-primary"
+                        aria-hidden="true"
                     /></button
                 >
             {:else}
-                <button class="btn btn-ghost btn-sm text-base-content/50" onclick={toggleZenMode}
-                    ><YinYang /></button
+                <button
+                    class="btn btn-ghost btn-sm text-base-content/50"
+                    onclick={toggleZenMode}
+                    aria-label="Toggle zen mode"><YinYang aria-hidden="true" /></button
                 >
             {/if}
             <ThemeDropdown />
@@ -55,7 +63,8 @@
                     class="btn btn-ghost btn-xs"
                     href={GITHUB_REPO_URL}
                     target="_blank"
-                    rel="noopener noreferrer"><Github /></a
+                    rel="noopener noreferrer"
+                    aria-label="View source code on GitHub"><Github aria-hidden="true" /></a
                 >
             </div>
         </div>
