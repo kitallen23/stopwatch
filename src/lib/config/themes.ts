@@ -4,6 +4,7 @@ export const themes = [
     "aqua",
     "black",
     "business",
+    "catppuccin",
     "coffee",
     "dark",
     "dim",
