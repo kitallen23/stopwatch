@@ -71,7 +71,7 @@
         {#key animationKey}
             {#if !$zenMode}
                 <div
-                    class="timer-indicator bg-primary shadow-md"
+                    class="timer-indicator bg-primary pointer-events-none shadow-md"
                     style:animation-play-state={isTimerActive ? "running" : "paused"}
                 ></div>
             {/if}
