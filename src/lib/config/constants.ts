@@ -4,6 +4,8 @@ const LOCAL_STORAGE_PREFIX = "stopwatch";
 export const LOCAL_STORAGE_KEYS = {
     theme: `${LOCAL_STORAGE_PREFIX}-theme`,
     zenMode: `${LOCAL_STORAGE_PREFIX}-zen-mode`,
+    timers: `${LOCAL_STORAGE_PREFIX}-timers`,
+    chosenTimerId: `${LOCAL_STORAGE_PREFIX}-chosen-timer`,
 };
 
 export const GITHUB_REPO_URL = "https://github.com/kitallen23/stopwatch";

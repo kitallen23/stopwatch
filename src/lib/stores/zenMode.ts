@@ -9,7 +9,11 @@ const defaultValue = false;
  * @type {Writable<boolean>}
  */
 export const zenMode: Writable<boolean> = writable<boolean>(
-    browser ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.zenMode) || "false") : defaultValue
+    browser
+        ? JSON.parse(
+              localStorage.getItem(LOCAL_STORAGE_KEYS.zenMode) || JSON.stringify(defaultValue)
+          )
+        : defaultValue
 );
 
 if (browser) {

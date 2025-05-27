@@ -2,6 +2,9 @@
     import type { TimerEntry } from "$lib/types/timer.types";
     import Timer from "$lib/components/Timer.svelte";
     import { nanoid } from "nanoid";
+    import { timers, chosenTimerId } from "$lib/stores/timers";
+    import TimerHistory from "$lib/components/TimerHistory.svelte";
+    import { formatTime } from "$lib/utils";
 
     let activeStartTime: number | null = $state(null); // Timestamp (ms) when the current active segment started
     let currentTimeDisplay: string = $state("0.00"); // Formatted time for display
@@ -41,28 +44,6 @@
             totalMs += Date.now() - activeStartTime;
         }
         return totalMs;
-    }
-
-    /**
-     * Formats milliseconds into MM:SS.ss format.
-     * @param {number} ms - The total elapsed time in milliseconds.
-     * @returns {string} The formatted time string.
-     */
-    function formatTime(ms: number): string {
-        const totalSeconds = ms / 1000;
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        const hundredths = Math.floor((seconds * 100) % 100);
-
-        const formattedMinutes = String(minutes);
-        const formattedSecondsShort = String(Math.floor(seconds));
-        const formattedSecondsLong = String(Math.floor(seconds)).padStart(2, "0");
-        const formattedHundredths = String(hundredths).padStart(2, "0");
-
-        if (minutes > 0) {
-            return `${formattedMinutes}:${formattedSecondsLong}.${formattedHundredths}`;
-        }
-        return `${formattedSecondsShort}.${formattedHundredths}`;
     }
 
     /**
@@ -127,9 +108,9 @@
     }
 
     /**
-     * Resets the timer animation to its starting position and pauses it.
+     * Resets the timer animation to its starting position, pauses it, and adds it to history.
      */
-    function handleTimerReset() {
+    function handleTimerReset(addToHistory: boolean = false) {
         if (isTimerActive) {
             // If timer is active, stop it first to save the current segment
             if (activeStartTime) {
@@ -142,8 +123,20 @@
             animationFrameId = null;
         }
 
-        if (timerEntry && timerEntry.times.length > 0) {
-            console.info(`Adding timer entry: `, timerEntry);
+        if (addToHistory && timerEntry && timerEntry.times.length > 0) {
+            // Create a plain object copy of timerEntry
+            const plainTimerEntry = JSON.parse(JSON.stringify(timerEntry));
+
+            const totalTime = calculateTotalElapsedTimeMs();
+            timers.update((currentTimers) => {
+                if (currentTimers[$chosenTimerId]) {
+                    currentTimers[$chosenTimerId].entries.push({
+                        ...plainTimerEntry,
+                        total: totalTime,
+                    });
+                }
+                return currentTimers;
+            });
         }
 
         timerEntry = blankTimerEntry();
@@ -162,6 +155,9 @@
         {animationKey}
         bind:notes={timerEntry.notes}
         toggle={handleTimerToggle}
-        reset={handleTimerReset}
+        reset={() => handleTimerReset(true)}
+        clear={() => handleTimerReset(false)}
     />
+
+    <TimerHistory />
 </div>

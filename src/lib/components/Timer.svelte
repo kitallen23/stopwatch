@@ -3,11 +3,13 @@
     import PlayArrow from "virtual:icons/material-symbols/play-arrow";
     import Pause from "virtual:icons/material-symbols/pause";
     import Refresh from "virtual:icons/material-symbols/refresh";
+    import Delete from "virtual:icons/material-symbols/delete-outline";
     import { zenMode } from "$lib/stores/zenMode";
 
     interface TimerProps {
         toggle: () => void;
         reset: () => void;
+        clear: () => void;
         currentTimeDisplay: string;
         isTimerActive: boolean;
         animationKey: number;
@@ -17,6 +19,7 @@
     let {
         toggle,
         reset,
+        clear,
         currentTimeDisplay,
         isTimerActive,
         animationKey,
@@ -85,13 +88,20 @@
         >
             {#if isTimerActive}<Pause />{:else}<PlayArrow />{/if}
         </button>
-        <button
-            class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`}
-            onclick={reset}
-            aria-label="Reset Timer"
-        >
-            <Refresh />
-        </button>
+        <div class="grid grid-cols-[1fr_auto] gap-x-1">
+            <button
+                class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`}
+                onclick={() => reset()}
+                aria-label="Reset Timer"
+            >
+                <Refresh />
+            </button>
+            {#if !isTimerActive && currentTimeDisplay !== "0.00"}
+                <button class="btn btn-secondary px-3" onclick={clear} aria-label="Discard">
+                    <Delete />
+                </button>
+            {/if}
+        </div>
         <textarea
             class={`textarea col-span-2 h-10 min-h-10 ${isTimerActive ? "textarea-secondary" : "textarea-primary"}`}
             placeholder="notes"
