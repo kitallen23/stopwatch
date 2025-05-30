@@ -148,7 +148,7 @@
     }
 </script>
 
-<div class="mx-auto mt-8 w-full max-w-4xl px-4">
+<div class="mx-auto mt-8 w-full max-w-4xl px-0 sm:px-4">
     <Timer
         {currentTimeDisplay}
         {isTimerActive}

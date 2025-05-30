@@ -113,6 +113,7 @@ body {
     display: grid;
     grid-template-rows: 1fr auto;
     min-height: var(--real-viewport-height);
+    overflow-x: hidden;
 }
 
 @layer base {

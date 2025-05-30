@@ -25,17 +25,18 @@
                     class="btn btn-ghost btn-sm text-base-content/50"
                     onclick={toggleZenMode}
                     aria-label="Toggle zen mode"
-                    ><span class="hidden sm:inline">zen mode: on </span><YinYang
-                        class="text-primary"
-                        aria-hidden="true"
-                    /></button
                 >
+                    <span class="mr-1 hidden sm:inline">zen mode: on</span>
+                    <YinYang class="text-primary" aria-hidden="true" />
+                </button>
             {:else}
                 <button
                     class="btn btn-ghost btn-sm text-base-content/50"
                     onclick={toggleZenMode}
-                    aria-label="Toggle zen mode"><YinYang aria-hidden="true" /></button
+                    aria-label="Toggle zen mode"
                 >
+                    <YinYang aria-hidden="true" />
+                </button>
             {/if}
             <ThemeDropdown />
         </div>
