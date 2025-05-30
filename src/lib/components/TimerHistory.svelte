@@ -1,7 +1,8 @@
 <script lang="ts">
     import { timer } from "$lib/stores/timers";
+    import { rerenderKey } from "$lib/stores/rerenderTimer";
     import { type TimerEntry } from "$lib/types/timer.types";
-    import { formatTime } from "$lib/utils";
+    import { formatTime, formatTimeStampRelativeToNow } from "$lib/utils";
 
     let allTimerEntries = $derived<TimerEntry[]>(
         $timer?.entries ? [...$timer.entries].reverse() : []
@@ -14,11 +15,24 @@
         <ul class="list bg-base-200 rounded-box shadow-md">
             {#each allTimerEntries as entry (entry.id)}
                 <li class="list-row">
-                    <div class="list-col-grow">
+                    <div class="item-timer-display list-col-grow">
                         <div>{formatTime(entry.total!)}</div>
                     </div>
+                    {#if entry.createdAt}
+                        {#key $rerenderKey}
+                            <div class="text-primary/50">
+                                <div>{formatTimeStampRelativeToNow(entry.createdAt)}</div>
+                            </div>
+                        {/key}
+                    {/if}
                 </li>
             {/each}
         </ul>
     </div>
 {/if}
+
+<style>
+    .item-timer-display {
+        min-width: 5em;
+    }
+</style>
