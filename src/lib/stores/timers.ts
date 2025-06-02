@@ -13,24 +13,43 @@ const defaultValue: Timers = {
     },
 };
 
+const getValidTimerId = (timersData: Timers, preferredId?: string): string => {
+    // If preferred ID exists in timers, use it
+    if (preferredId && timersData[preferredId]) {
+        return preferredId;
+    }
+
+    // Otherwise, get the first available timer ID
+    const timerIds = Object.keys(timersData);
+    return timerIds.length > 0 ? timerIds[0] : initialTimerId;
+};
+
+// Initialize with validation
+const storedTimers = browser
+    ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.timers) || JSON.stringify(defaultValue))
+    : defaultValue;
+
+const storedChosenTimerId = browser ? localStorage.getItem(LOCAL_STORAGE_KEYS.chosenTimerId) : null;
+
 /**
  * Store containing all timers data
  * @type {Writable<Timers>}
  */
-export const timers: Writable<Timers> = writable<Timers>(
-    browser
-        ? JSON.parse(
-              localStorage.getItem(LOCAL_STORAGE_KEYS.timers) || JSON.stringify(defaultValue)
-          )
-        : defaultValue
+export const timers: Writable<Timers> = writable<Timers>(storedTimers);
+
+export const chosenTimerId: Writable<string> = writable<string>(
+    getValidTimerId(storedTimers, storedChosenTimerId || undefined)
 );
 
-// Initialize chosenTimer after timers is created
-const initialTimerValue = browser
-    ? localStorage.getItem(LOCAL_STORAGE_KEYS.chosenTimerId) || initialTimerId
-    : initialTimerId;
-
-export const chosenTimerId: Writable<string> = writable<string>(initialTimerValue);
+// Derived store to automatically sync chosenTimerId when timers change
+const syncChosenTimer = derived([timers, chosenTimerId], ([$timers, $chosenTimerId]) => {
+    const validId = getValidTimerId($timers, $chosenTimerId);
+    if (validId !== $chosenTimerId) {
+        chosenTimerId.set(validId);
+    }
+    return validId;
+});
+syncChosenTimer.subscribe(() => {});
 
 /**
  * Derived store that contains the currently selected timer object
@@ -42,6 +61,23 @@ export const timer: Readable<Timer | undefined> = derived(
         return $timers[$chosenTimerId];
     }
 );
+
+/**
+ * Adds a new timer entry to the currently selected timer
+ * @param timerEntry - The timer entry object to add
+ */
+export function addTimerEntry(timerEntry: TimerEntry): void {
+    timers.update(($timers) => {
+        const currentTimerId = get(chosenTimerId);
+        const currentTimer = $timers[currentTimerId];
+
+        if (currentTimer) {
+            currentTimer.entries.push(timerEntry);
+        }
+
+        return $timers;
+    });
+}
 
 /**
  * Removes a timer entry from the currently selected timer
@@ -78,6 +114,22 @@ export function updateTimerEntry(entryId: string, updates: Partial<TimerEntry>):
                     ...updates,
                 };
             }
+        }
+
+        return $timers;
+    });
+}
+
+/**
+ * Clears all timer entries from the currently selected timer
+ */
+export function clearTimerEntries(): void {
+    timers.update(($timers) => {
+        const currentTimerId = get(chosenTimerId);
+        const currentTimer = $timers[currentTimerId];
+
+        if (currentTimer) {
+            currentTimer.entries = [];
         }
 
         return $timers;

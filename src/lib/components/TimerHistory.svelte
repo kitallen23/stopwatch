@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { removeTimerEntry, timer, updateTimerEntry } from "$lib/stores/timers";
+    import {
+        clearTimerEntries,
+        removeTimerEntry,
+        timer,
+        updateTimerEntry,
+    } from "$lib/stores/timers";
     import { rerenderKey } from "$lib/stores/rerenderTimer";
     import { type TimerEntry } from "$lib/types/timer.types";
     import { formatTime, formatTimeStampRelativeToNow } from "$lib/utils";
@@ -47,12 +52,12 @@
     $effect(() => (isClearModalOpen ? confirmClearModal?.showModal() : confirmClearModal?.close()));
 
     function onClearTimerHistory() {
-        console.log(`onClearTimerHistory called`);
+        clearTimerEntries();
     }
 </script>
 
 {#if paginatedTimerEntries.length}
-    <div class="mx-auto grid max-w-md min-w-64 gap-4 p-6">
+    <div class="mx-auto grid w-full max-w-md min-w-64 gap-4 px-6">
         <div class="flex items-center justify-between">
             <div>
                 history <span class="text-base-content/50">({($timer?.entries || []).length})</span>
@@ -88,7 +93,7 @@
                                 {/if}
                             </div>
                             <button
-                                class={`notes-button btn btn-ghost btn-sm ${entry.notes.trim() ? "" : "invisible"} text-primary/50 hover:text-primary -my-2 h-auto px-2 py-2`}
+                                class={`notes-button btn btn-ghost btn-sm ${entry.notes.trim() ? "" : "visible sm:invisible"} text-primary/50 hover:text-primary -my-2 h-auto px-2 py-2`}
                                 aria-label="Show notes"
                                 onclick={() => (editTimerEntryId = entry.id)}
                             >
@@ -101,7 +106,7 @@
                         </div>
                         <div>
                             <button
-                                class="btn btn-ghost btn-sm text-primary/50 hover:text-error -my-2 h-auto px-2 py-2"
+                                class="delete-button btn btn-ghost btn-sm text-primary/50 hover:text-error visible -my-2 h-auto px-2 py-2 sm:invisible"
                                 aria-label="Remove timer entry"
                                 onclick={() => removeTimerEntry(entry.id)}
                             >
@@ -180,6 +185,9 @@
     }
     .list-row:hover {
         .notes-button {
+            visibility: visible;
+        }
+        .delete-button {
             visibility: visible;
         }
     }
