@@ -21,19 +21,19 @@
         [...($timer?.entries || [])].reverse().slice(0, INITIAL_PAGE_SIZE + pages * PAGE_SIZE)
     );
 
-    let editModal: HTMLDialogElement | undefined = $state(undefined);
+    let editModalElement: HTMLDialogElement | undefined = $state(undefined);
 
     let tempNotesValue = $state<string>("");
     let editTimerEntryId = $state<string | null>(null);
     $effect(() => {
-        if (editModal && editTimerEntryId) {
+        if (editModalElement && editTimerEntryId) {
             let timerEntry = $timer?.entries.find((entry) => entry.id === editTimerEntryId);
-            editModal.showModal();
+            editModalElement.showModal();
             if (timerEntry?.notes) {
                 tempNotesValue = timerEntry.notes;
             }
         } else {
-            editModal?.close();
+            editModalElement?.close();
             tempNotesValue = "";
         }
     });
@@ -42,17 +42,19 @@
         if (editTimerEntryId) {
             updateTimerEntry(editTimerEntryId, { notes: tempNotesValue || "" });
         }
-        editModal?.close();
+        editModalElement?.close();
         tempNotesValue = "";
     }
 
     let isClearModalOpen = $state(false);
-    let confirmClearModal: HTMLDialogElement | undefined = $state(undefined);
-
-    $effect(() => (isClearModalOpen ? confirmClearModal?.showModal() : confirmClearModal?.close()));
+    let confirmClearModalElement: HTMLDialogElement | undefined = $state(undefined);
+    $effect(() =>
+        isClearModalOpen ? confirmClearModalElement?.showModal() : confirmClearModalElement?.close()
+    );
 
     function onClearTimerHistory() {
         clearTimerEntries();
+        isClearModalOpen = false;
     }
 </script>
 
@@ -85,7 +87,7 @@
                     {/if}
                     <div class="flex">
                         <div class="sm:tooltip">
-                            <div class="tooltip-content hidden max-w-56 sm:block">
+                            <div class="tooltip-content hidden max-w-56 min-w-24 sm:block">
                                 {#if entry.notes.trim()}
                                     <div class="text-start whitespace-pre-line">
                                         {entry.notes.trim()}
@@ -129,8 +131,8 @@
         id="edit_modal"
         class="modal"
         onclose={() => (editTimerEntryId = null)}
-        onclick={(e) => e.target === editModal && (editTimerEntryId = null)}
-        bind:this={editModal}
+        onclick={(e) => e.target === editModalElement && (editTimerEntryId = null)}
+        bind:this={editModalElement}
     >
         <div
             class="modal-box h-[calc(60dvh-var(--spacing)*8)] min-h-[80dvh] sm:h-auto sm:min-h-auto"
@@ -150,14 +152,15 @@
             </div>
         </div>
     </dialog>
+
     <dialog
         id="clear_modal"
         class="modal"
         onclose={() => (isClearModalOpen = false)}
-        onclick={(e) => e.target === confirmClearModal && (isClearModalOpen = false)}
-        bind:this={confirmClearModal}
+        onclick={(e) => e.target === confirmClearModalElement && (isClearModalOpen = false)}
+        bind:this={confirmClearModalElement}
     >
-        <div class="modal-box max-w-md">
+        <div class="modal-box max-w-sm">
             <button
                 class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
                 aria-label="Cancel & close modal"

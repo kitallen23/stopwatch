@@ -63,6 +63,46 @@ export const timer: Readable<Timer | undefined> = derived(
 );
 
 /**
+ * *****************************************************************************
+ * Timer mutators **************************************************************
+ * *****************************************************************************
+ */
+/**
+ * Adds a new timer to the timers collection and sets it as the currently selected timer
+ * @param timer - The timer object to add
+ */
+export function addTimer(timer: Timer): void {
+    timers.update(($timers) => {
+        $timers[timer.id] = timer;
+        return $timers;
+    });
+    chosenTimerId.set(timer.id);
+}
+
+/**
+ * Updates the currently selected timer with the provided partial timer data
+ * @param timer - Partial timer object containing fields to update
+ */
+export function editTimer(timer: Partial<Timer>): void {
+    timers.update(($timers) => {
+        const currentTimerId = get(chosenTimerId);
+        if ($timers[currentTimerId]) {
+            $timers[currentTimerId] = {
+                ...$timers[currentTimerId],
+                ...timer,
+            };
+        }
+        return $timers;
+    });
+}
+
+/**
+ * *****************************************************************************
+ * Timer entry mutators ********************************************************
+ * *****************************************************************************
+ */
+
+/**
  * Adds a new timer entry to the currently selected timer
  * @param timerEntry - The timer entry object to add
  */
