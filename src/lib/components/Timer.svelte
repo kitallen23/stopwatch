@@ -50,6 +50,8 @@
             };
         }
     });
+
+    let showDeleteButton = $derived(!isTimerActive && currentTimeDisplay !== "0.00");
 </script>
 
 <div class="mx-auto grid max-w-sm min-w-64 gap-4 p-6">
@@ -88,7 +90,7 @@
         >
             {#if isTimerActive}<Pause />{:else}<PlayArrow />{/if}
         </button>
-        <div class="grid grid-cols-[1fr_auto] gap-x-1">
+        <div class={`grid grid-cols-[1fr_auto] ${showDeleteButton ? "gap-x-1" : ""}`}>
             <button
                 class={`btn ${isTimerActive ? "btn-secondary" : "btn-primary"}`}
                 onclick={() => reset()}
@@ -96,7 +98,7 @@
             >
                 <Refresh />
             </button>
-            {#if !isTimerActive && currentTimeDisplay !== "0.00"}
+            {#if showDeleteButton}
                 <button class="btn btn-secondary px-3" onclick={clear} aria-label="Discard">
                     <Delete />
                 </button>
