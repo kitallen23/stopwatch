@@ -5,13 +5,18 @@
     import { formatTime, formatTimeStampRelativeToNow } from "$lib/utils";
     import CommentText from "virtual:icons/mdi/comment-text-outline";
     import CommentEdit from "virtual:icons/mdi/comment-edit-outline";
+    import WindowClose from "virtual:icons/mdi/window-close";
     import Delete from "virtual:icons/material-symbols/delete-outline";
 
-    let allTimerEntries = $derived<TimerEntry[]>(
-        $timer?.entries ? [...$timer.entries].reverse() : []
+    const PAGE_SIZE = 100;
+    const INITIAL_PAGE_SIZE = 5;
+
+    let pages = $state(0);
+    let paginatedTimerEntries = $derived<TimerEntry[]>(
+        [...($timer?.entries || [])].reverse().slice(0, INITIAL_PAGE_SIZE + pages * PAGE_SIZE)
     );
 
-    let editModal: HTMLDialogElement | undefined;
+    let editModal: HTMLDialogElement | undefined = $state(undefined);
 
     let tempNotesValue = $state<string>("");
     let editTimerEntryId = $state<string | null>(null);
@@ -35,13 +40,33 @@
         editModal?.close();
         tempNotesValue = "";
     }
+
+    let isClearModalOpen = $state(false);
+    let confirmClearModal: HTMLDialogElement | undefined = $state(undefined);
+
+    $effect(() => (isClearModalOpen ? confirmClearModal?.showModal() : confirmClearModal?.close()));
+
+    function onClearTimerHistory() {
+        console.log(`onClearTimerHistory called`);
+    }
 </script>
 
-{#if allTimerEntries.length}
+{#if paginatedTimerEntries.length}
     <div class="mx-auto grid max-w-md min-w-64 gap-4 p-6">
-        <div>history <span class="text-base-content/50">({allTimerEntries.length})</span></div>
+        <div class="flex items-center justify-between">
+            <div>
+                history <span class="text-base-content/50">({($timer?.entries || []).length})</span>
+            </div>
+            <button
+                class="btn btn-ghost btn-sm text-base-content/50"
+                onclick={() => (isClearModalOpen = true)}
+                aria-label="Clear timer history"
+            >
+                clear
+            </button>
+        </div>
         <ul class="list bg-base-200 rounded-box shadow-md">
-            {#each allTimerEntries as entry (entry.id)}
+            {#each paginatedTimerEntries as entry (entry.id)}
                 <li class="list-row items-center p-3">
                     <div class="item-timer-display list-col-grow">
                         <div>{formatTime(entry.total!)}</div>
@@ -55,10 +80,12 @@
                     {/if}
                     <div class="flex">
                         <div class="sm:tooltip">
-                            <div
-                                class="tooltip-content hidden max-w-56 text-start whitespace-pre-line sm:block"
-                            >
-                                {entry.notes.trim()}
+                            <div class="tooltip-content hidden max-w-56 sm:block">
+                                {#if entry.notes.trim()}
+                                    <div class="text-start whitespace-pre-line">
+                                        {entry.notes.trim()}
+                                    </div>
+                                {/if}
                             </div>
                             <button
                                 class={`notes-button btn btn-ghost btn-sm ${entry.notes.trim() ? "" : "invisible"} text-primary/50 hover:text-primary -my-2 h-auto px-2 py-2`}
@@ -85,33 +112,66 @@
                 </li>
             {/each}
         </ul>
+        {#if paginatedTimerEntries.length < ($timer?.entries || []).length}
+            <div class="text-center">
+                <button class="btn btn-ghost btn-sm text-base-content/50" onclick={() => pages++}>
+                    load more
+                </button>
+            </div>
+        {/if}
     </div>
-    {#key editTimerEntryId}
-        <dialog
-            id="edit_modal"
-            class="modal"
-            onclose={() => (editTimerEntryId = null)}
-            bind:this={editModal}
+    <dialog
+        id="edit_modal"
+        class="modal"
+        onclose={() => (editTimerEntryId = null)}
+        onclick={(e) => e.target === editModal && (editTimerEntryId = null)}
+        bind:this={editModal}
+    >
+        <div
+            class="modal-box h-[calc(60dvh-var(--spacing)*8)] min-h-[80dvh] sm:h-auto sm:min-h-auto"
         >
-            <div
-                class="modal-box h-[calc(60dvh-var(--spacing)*8)] min-h-[80dvh] sm:h-auto sm:min-h-auto"
-            >
-                <div class="grid h-full grid-cols-1 grid-rows-[1fr_auto] gap-y-4">
-                    <textarea
-                        class="textarea textarea-primary col-span-2 h-auto w-full sm:h-40 sm:min-h-40"
-                        placeholder="notes"
-                        bind:value={tempNotesValue}
-                    ></textarea>
-                    <div class="flex w-full justify-between">
-                        <button class="btn btn-ghost" onclick={() => (editTimerEntryId = null)}
-                            >cancel</button
-                        >
-                        <button class="btn btn-primary" onclick={onNotesSubmit}>submit</button>
-                    </div>
+            <div class="grid h-full grid-cols-1 grid-rows-[1fr_auto] gap-y-4">
+                <textarea
+                    class="textarea textarea-primary col-span-2 h-auto w-full resize-none sm:h-40 sm:min-h-40 sm:resize-y"
+                    placeholder="notes"
+                    bind:value={tempNotesValue}
+                ></textarea>
+                <div class="flex w-full justify-between">
+                    <button class="btn btn-ghost" onclick={() => (editTimerEntryId = null)}>
+                        cancel
+                    </button>
+                    <button class="btn btn-primary" onclick={onNotesSubmit}>submit</button>
                 </div>
             </div>
-        </dialog>
-    {/key}
+        </div>
+    </dialog>
+    <dialog
+        id="clear_modal"
+        class="modal"
+        onclose={() => (isClearModalOpen = false)}
+        onclick={(e) => e.target === confirmClearModal && (isClearModalOpen = false)}
+        bind:this={confirmClearModal}
+    >
+        <div class="modal-box max-w-md">
+            <button
+                class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
+                aria-label="Cancel & close modal"
+                onclick={() => (isClearModalOpen = false)}
+            >
+                <WindowClose />
+            </button>
+            <div class="grid gap-y-4">
+                <h3 class="text-lg font-bold">clear timer history</h3>
+                <p class="py-4">are you sure you wish to clear all history items for this timer?</p>
+                <div class="flex w-full justify-between">
+                    <button class="btn btn-ghost" onclick={() => (isClearModalOpen = false)}>
+                        cancel
+                    </button>
+                    <button class="btn btn-primary" onclick={onClearTimerHistory}>yes</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
 {/if}
 
 <style>
