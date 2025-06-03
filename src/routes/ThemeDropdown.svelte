@@ -1,24 +1,28 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import { themes } from "$lib";
-    import ThemeIndicator from "$lib/components/ThemeIndicator.svelte";
-    import { LOCAL_STORAGE_KEYS } from "$lib/config/constants";
+    import { DEFAULT_THEME_IDENTIFIER, LOCAL_STORAGE_KEYS } from "$lib/config/constants";
+
     import KeyboardArrowDown from "virtual:icons/material-symbols-light/keyboard-arrow-down";
     import CheckCircle from "virtual:icons/material-symbols/check-circle";
+    import ThemeIndicator from "$lib/components/ThemeIndicator.svelte";
 
-    let currentAppliedTheme = "";
+    let currentAppliedTheme = $state("");
 
-    if (browser) {
-        currentAppliedTheme = document.documentElement.getAttribute("data-theme") || "";
+    onMount(() => {
+        if (browser) {
+            currentAppliedTheme = document.documentElement.getAttribute("data-theme") || "";
 
-        if (!currentAppliedTheme) {
-            const themeFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.theme);
-            if (themeFromStorage) {
-                document.documentElement.setAttribute("data-theme", themeFromStorage);
-                currentAppliedTheme = themeFromStorage;
+            if (!currentAppliedTheme) {
+                const themeFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.theme);
+                if (themeFromStorage) {
+                    document.documentElement.setAttribute("data-theme", themeFromStorage);
+                    currentAppliedTheme = themeFromStorage;
+                }
             }
         }
-    }
+    });
 
     function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
         const theme = event.currentTarget.getAttribute("aria-label");
@@ -31,7 +35,7 @@
 </script>
 
 <div class="dropdown dropdown-end">
-    <div tabindex="0" role="button" class="btn btn-ghost btn-sm px-2">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-sm px-2" aria-label="Theme picker">
         <ThemeIndicator identifier={currentAppliedTheme} />
         <KeyboardArrowDown />
     </div>
@@ -44,11 +48,11 @@
                         name="theme-dropdown"
                         class="theme-controller grid-cols-[auto_auto_1fr]"
                         aria-label={theme}
-                        on:click={handleClick}
+                        onclick={handleClick}
                     >
                         <ThemeIndicator identifier={theme} />
                         {theme}
-                        {#if theme === currentAppliedTheme}
+                        {#if theme === (currentAppliedTheme || DEFAULT_THEME_IDENTIFIER)}
                             <div class="flex items-center justify-end">
                                 <CheckCircle />
                             </div>

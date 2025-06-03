@@ -1,3 +1,7 @@
+export type Timers = {
+    [id: string]: Timer;
+};
+
 export type Timer = {
     id: string;
     name: string;
@@ -9,6 +13,7 @@ export type TimerEntry = {
     notes: string;
     times: TimeSegment[];
     createdAt?: number | null;
+    total?: number;
 };
 
 // Note that these numbers are timestamps (like Date().getTime())

@@ -15,19 +15,28 @@
 </script>
 
 <header class="bg-base-200 fixed top-0 right-0 w-full">
-    <div class="mx-auto flex h-10 w-full max-w-4xl items-center justify-between gap-2 px-4">
-        <a href="/" class="app-title flex items-center gap-1 text-lg"><Timer />stopwatch.</a>
+    <div class="mx-auto flex h-10 w-full max-w-2xl items-center justify-between gap-2 px-4">
+        <a href="/" class="app-title flex items-center gap-1 text-lg"
+            ><Timer aria-hidden="true" />stopwatch.</a
+        >
         <div class="flex items-center justify-end gap-2">
             {#if $zenMode}
-                <button class="btn btn-ghost btn-sm text-base-content/50" onclick={toggleZenMode}
-                    ><span class="hidden sm:inline">zen mode: on </span><YinYang
-                        class="text-primary"
-                    /></button
+                <button
+                    class="btn btn-ghost btn-sm text-base-content/60"
+                    onclick={toggleZenMode}
+                    aria-label="Toggle zen mode"
                 >
+                    <span class="mr-1 hidden sm:inline">zen mode: on</span>
+                    <YinYang class="text-primary" aria-hidden="true" />
+                </button>
             {:else}
-                <button class="btn btn-ghost btn-sm text-base-content/50" onclick={toggleZenMode}
-                    ><YinYang /></button
+                <button
+                    class="btn btn-ghost btn-sm text-base-content/60"
+                    onclick={toggleZenMode}
+                    aria-label="Toggle zen mode"
                 >
+                    <YinYang aria-hidden="true" />
+                </button>
             {/if}
             <ThemeDropdown />
         </div>
@@ -38,9 +47,9 @@
     {@render children()}
 </main>
 
-<footer class="footer bg-base-200 text-base-content/50 place-items-end px-2 py-1">
+<footer class="footer bg-base-200 text-base-content/60 place-items-end px-2 py-1">
     <aside class="w-full">
-        <div class="mx-auto flex w-full max-w-4xl items-center justify-end gap-10 text-xs">
+        <div class="mx-auto flex w-full max-w-2xl items-center justify-end gap-10 text-xs">
             <span>app v{APP_VERSION}</span>
             <div class="flex items-center">
                 <span
@@ -55,7 +64,8 @@
                     class="btn btn-ghost btn-xs"
                     href={GITHUB_REPO_URL}
                     target="_blank"
-                    rel="noopener noreferrer"><Github /></a
+                    rel="noopener noreferrer"
+                    aria-label="View source code on GitHub"><Github aria-hidden="true" /></a
                 >
             </div>
         </div>
