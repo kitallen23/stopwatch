@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
-import TimerPage from "./+page.svelte";
+import Timer from "$lib/components/Timer.svelte";
 
 describe("Timer Component", () => {
     beforeEach(() => {
@@ -30,7 +30,7 @@ describe("Timer Component", () => {
     });
 
     it("should initialize with zeroed timer display", () => {
-        render(TimerPage);
+        render(Timer);
         expect(screen.getByText("0.00")).toBeInTheDocument();
     });
 });

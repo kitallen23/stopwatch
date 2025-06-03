@@ -1,10 +1,28 @@
 <script lang="ts">
+    import { browser } from "$app/environment";
+    import { nanoid } from "nanoid";
     import WindowClose from "virtual:icons/mdi/window-close";
     import Plus from "virtual:icons/mdi/plus";
     import Pencil from "virtual:icons/mdi/pencil";
     import Delete from "virtual:icons/material-symbols/delete-outline";
-    import { timers, chosenTimerId, addTimer, editTimer } from "$lib/stores/timers";
-    import { nanoid } from "nanoid";
+    import {
+        timers,
+        chosenTimerId,
+        addTimer,
+        editTimer,
+        timer,
+        deleteTimer,
+    } from "$lib/stores/timers";
+
+    let isHydrated = $state(false);
+    $effect(() => {
+        // Mark as hydrated after first tick when localStorage has loaded
+        if (browser) {
+            setTimeout(() => (isHydrated = true), 0);
+        } else {
+            isHydrated = true;
+        }
+    });
 
     let timerOptions = $derived(
         [...Object.entries($timers || [])]
@@ -97,31 +115,49 @@
             }
         }
     }
+
+    let isDeleteModalOpen = $state(false);
+    let deleteTimerModalElement: HTMLDialogElement | undefined = $state(undefined);
+
+    $effect(() => {
+        if (isDeleteModalOpen) {
+            deleteTimerModalElement?.showModal();
+        } else {
+            deleteTimerModalElement?.close();
+        }
+    });
+
+    function handleDeleteTimer() {
+        deleteTimer();
+        isDeleteModalOpen = false;
+    }
 </script>
 
-<div class="mx-auto grid w-full max-w-sm min-w-64 gap-4 px-6">
-    <div class="mx-auto grid w-full max-w-64 min-w-64 gap-4">
-        <div class="flex gap-x-2">
-            <select class="select select-primary" bind:value={$chosenTimerId}>
-                {#each timerOptions as option (option.value)}
-                    <option value={option.value}>{option.label}</option>
-                {/each}
-            </select>
-            <button
-                class="btn btn-primary btn-outline px-2"
-                onclick={() => (isModifyModalOpen = true)}
-            >
-                <Pencil />
-            </button>
-            <button
-                class="btn btn-primary btn-outline px-2"
-                onclick={() => (isAddModalOpen = true)}
-            >
-                <Plus />
-            </button>
+{#if isHydrated}
+    <div class="mx-auto grid w-full max-w-sm min-w-64 gap-4 px-6">
+        <div class="mx-auto grid w-full max-w-64 min-w-64 gap-4">
+            <div class="flex gap-x-2">
+                <select class="select select-primary" bind:value={$chosenTimerId}>
+                    {#each timerOptions as option (option.value)}
+                        <option value={option.value}>{option.label}</option>
+                    {/each}
+                </select>
+                <button
+                    class="btn btn-primary btn-outline px-2"
+                    onclick={() => (isModifyModalOpen = true)}
+                >
+                    <Pencil />
+                </button>
+                <button
+                    class="btn btn-primary btn-outline px-2"
+                    onclick={() => (isAddModalOpen = true)}
+                >
+                    <Plus />
+                </button>
+            </div>
         </div>
     </div>
-</div>
+{/if}
 
 <dialog
     id="add_timer_modal"
@@ -180,8 +216,17 @@
             <WindowClose />
         </button>
         <div class="grid gap-y-4">
-            <h3 class="text-lg font-bold">remove timer</h3>
-            <button class="btn btn-error"><Delete />remove</button>
+            <h3 class="text-lg font-bold">delete timer</h3>
+            <button
+                class="btn btn-error"
+                onclick={() => {
+                    isModifyModalOpen = false;
+                    isDeleteModalOpen = true;
+                }}
+                disabled={timerOptions.length <= 1}
+            >
+                <Delete />delete
+            </button>
             <div class="divider text-base-content/50">or</div>
             <h3 class="text-lg font-bold">rename timer</h3>
             <fieldset class="fieldset">
@@ -203,6 +248,38 @@
                     cancel
                 </button>
                 <button class="btn btn-primary" onclick={handleModifyTimer}>rename</button>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<dialog
+    id="delete_timer_modal"
+    class="modal"
+    onclose={() => (isDeleteModalOpen = false)}
+    onclick={(e) => e.target === deleteTimerModalElement && (isDeleteModalOpen = false)}
+    bind:this={deleteTimerModalElement}
+>
+    <div class="modal-box max-w-sm">
+        <button
+            class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
+            aria-label="Cancel & close modal"
+            onclick={() => (isDeleteModalOpen = false)}
+        >
+            <WindowClose />
+        </button>
+        <div class="grid gap-y-4">
+            <h3 class="text-lg font-bold">delete timer</h3>
+            <p class="py-4">
+                are you sure you wish to delete the timer '<span class="font-bold"
+                    >{$timer?.name}</span
+                >' and all of its history?
+            </p>
+            <div class="flex w-full justify-between">
+                <button class="btn btn-ghost" onclick={() => (isDeleteModalOpen = false)}>
+                    cancel
+                </button>
+                <button class="btn btn-primary" onclick={handleDeleteTimer}>yes</button>
             </div>
         </div>
     </div>

@@ -24,10 +24,20 @@ const getValidTimerId = (timersData: Timers, preferredId?: string): string => {
     return timerIds.length > 0 ? timerIds[0] : initialTimerId;
 };
 
-// Initialize with validation
-const storedTimers = browser
-    ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.timers) || JSON.stringify(defaultValue))
-    : defaultValue;
+const storedTimers = (() => {
+    if (browser) {
+        try {
+            const timersString = localStorage.getItem(LOCAL_STORAGE_KEYS.timers);
+            if (timersString) {
+                const timersObj: Timers = JSON.parse(timersString);
+                if (Object.keys(timersObj).length) {
+                    return timersObj;
+                }
+            }
+        } catch {} // eslint-disable-line no-empty
+    }
+    return defaultValue;
+})();
 
 const storedChosenTimerId = browser ? localStorage.getItem(LOCAL_STORAGE_KEYS.chosenTimerId) : null;
 
@@ -67,6 +77,7 @@ export const timer: Readable<Timer | undefined> = derived(
  * Timer mutators **************************************************************
  * *****************************************************************************
  */
+
 /**
  * Adds a new timer to the timers collection and sets it as the currently selected timer
  * @param timer - The timer object to add
@@ -92,6 +103,23 @@ export function editTimer(timer: Partial<Timer>): void {
                 ...timer,
             };
         }
+        return $timers;
+    });
+}
+
+/**
+ * Deletes the currently selected timer from the timers store.
+ */
+export function deleteTimer(): void {
+    // Return early if there is only one timer left
+    const currentTimers = get(timers);
+    if (Object.keys(currentTimers).length <= 1) {
+        return;
+    }
+
+    timers.update(($timers) => {
+        const currentTimerId = get(chosenTimerId);
+        delete $timers[currentTimerId];
         return $timers;
     });
 }
