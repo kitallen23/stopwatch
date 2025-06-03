@@ -62,10 +62,10 @@
     <div class="mx-auto grid w-full max-w-md min-w-64 gap-4 px-6">
         <div class="flex items-center justify-between">
             <div>
-                history <span class="text-base-content/50">({($timer?.entries || []).length})</span>
+                history <span class="text-base-content/60">({($timer?.entries || []).length})</span>
             </div>
             <button
-                class="btn btn-ghost btn-sm text-base-content/50"
+                class="btn btn-ghost btn-sm text-base-content/60"
                 onclick={() => (isClearModalOpen = true)}
                 aria-label="Clear timer history"
             >
@@ -80,7 +80,7 @@
                     </div>
                     {#if entry.createdAt}
                         {#key $rerenderKey}
-                            <div class="text-primary/50 text-xs">
+                            <div class="text-primary/60 text-xs">
                                 <div>{formatTimeStampRelativeToNow(entry.createdAt)}</div>
                             </div>
                         {/key}
@@ -95,7 +95,7 @@
                                 {/if}
                             </div>
                             <button
-                                class={`notes-button btn btn-ghost btn-sm ${entry.notes.trim() ? "" : "visible sm:invisible"} text-primary/50 hover:text-primary -my-2 h-auto px-2 py-2`}
+                                class={`notes-button btn btn-ghost btn-sm ${entry.notes.trim() ? "" : "visible sm:invisible"} text-primary/60 hover:text-primary -my-2 h-auto px-2 py-2`}
                                 aria-label="Show notes"
                                 onclick={() => (editTimerEntryId = entry.id)}
                             >
@@ -108,7 +108,7 @@
                         </div>
                         <div>
                             <button
-                                class="delete-button btn btn-ghost btn-sm text-primary/50 hover:text-error visible -my-2 h-auto px-2 py-2 sm:invisible"
+                                class="delete-button btn btn-ghost btn-sm text-primary/60 hover:text-error visible -my-2 h-auto px-2 py-2 sm:invisible"
                                 aria-label="Remove timer entry"
                                 onclick={() => removeTimerEntry(entry.id)}
                             >
@@ -121,7 +121,7 @@
         </ul>
         {#if paginatedTimerEntries.length < ($timer?.entries || []).length}
             <div class="text-center">
-                <button class="btn btn-ghost btn-sm text-base-content/50" onclick={() => pages++}>
+                <button class="btn btn-ghost btn-sm text-base-content/60" onclick={() => pages++}>
                     load more
                 </button>
             </div>
@@ -162,7 +162,7 @@
     >
         <div class="modal-box max-w-sm">
             <button
-                class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
+                class="btn btn-sm btn-circle btn-ghost text-base-content/60 hover:text-base-content absolute top-2 right-2"
                 aria-label="Cancel & close modal"
                 onclick={() => (isClearModalOpen = false)}
             >

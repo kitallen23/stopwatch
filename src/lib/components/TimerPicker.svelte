@@ -32,7 +32,6 @@
                     label: timer.entries.length
                         ? `${timer.name} (${timer.entries.length})`
                         : timer.name,
-                    isActive: $chosenTimerId === id,
                 };
             })
             .sort((a, b) => a.label.toLowerCase().localeCompare(b.label))
@@ -137,7 +136,11 @@
     <div class="mx-auto grid w-full max-w-sm min-w-64 gap-4 px-6">
         <div class="mx-auto grid w-full max-w-64 min-w-64 gap-4">
             <div class="flex gap-x-2">
-                <select class="select select-primary" bind:value={$chosenTimerId}>
+                <select
+                    class="select select-primary"
+                    bind:value={$chosenTimerId}
+                    aria-label="Select timer"
+                >
                     {#each timerOptions as option (option.value)}
                         <option value={option.value}>{option.label}</option>
                     {/each}
@@ -145,12 +148,14 @@
                 <button
                     class="btn btn-primary btn-outline px-2"
                     onclick={() => (isModifyModalOpen = true)}
+                    aria-label="Edit or delete current timer"
                 >
                     <Pencil />
                 </button>
                 <button
                     class="btn btn-primary btn-outline px-2"
                     onclick={() => (isAddModalOpen = true)}
+                    aria-label="Add new timer"
                 >
                     <Plus />
                 </button>
@@ -168,7 +173,7 @@
 >
     <div class="modal-box max-w-sm">
         <button
-            class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
+            class="btn btn-sm btn-circle btn-ghost text-base-content/60 hover:text-base-content absolute top-2 right-2"
             aria-label="Cancel & close modal"
             onclick={() => (isAddModalOpen = false)}
         >
@@ -209,7 +214,7 @@
 >
     <div class="modal-box max-w-sm">
         <button
-            class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
+            class="btn btn-sm btn-circle btn-ghost text-base-content/60 hover:text-base-content absolute top-2 right-2"
             aria-label="Cancel & close modal"
             onclick={() => (isModifyModalOpen = false)}
         >
@@ -227,7 +232,7 @@
             >
                 <Delete />delete
             </button>
-            <div class="divider text-base-content/50">or</div>
+            <div class="divider text-base-content/60">or</div>
             <h3 class="text-lg font-bold">rename timer</h3>
             <fieldset class="fieldset">
                 <input
@@ -262,7 +267,7 @@
 >
     <div class="modal-box max-w-sm">
         <button
-            class="btn btn-sm btn-circle btn-ghost text-base-content/50 hover:text-base-content absolute top-2 right-2"
+            class="btn btn-sm btn-circle btn-ghost text-base-content/60 hover:text-base-content absolute top-2 right-2"
             aria-label="Cancel & close modal"
             onclick={() => (isDeleteModalOpen = false)}
         >

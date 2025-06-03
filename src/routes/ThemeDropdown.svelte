@@ -31,7 +31,7 @@
 </script>
 
 <div class="dropdown dropdown-end">
-    <div tabindex="0" role="button" class="btn btn-ghost btn-sm px-2">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-sm px-2" aria-label="Theme picker">
         <ThemeIndicator identifier={currentAppliedTheme} />
         <KeyboardArrowDown />
     </div>
