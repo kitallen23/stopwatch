@@ -8,5 +8,7 @@ export const LOCAL_STORAGE_KEYS = {
     chosenTimerId: `${LOCAL_STORAGE_PREFIX}-chosen-timer`,
 };
 
+export const DEFAULT_THEME_IDENTIFIER = "catppuccin";
+
 export const GITHUB_REPO_URL = "https://github.com/kitallen23/stopwatch";
 export const GITHUB_USER_URL = "https://github.com/kitallen23";

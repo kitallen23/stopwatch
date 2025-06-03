@@ -1,5 +1,8 @@
 <script lang="ts">
-    export let identifier: string;
+    type ThemeIndicatorProps = {
+        identifier: string;
+    };
+    let { identifier }: ThemeIndicatorProps = $props();
 </script>
 
 <div
