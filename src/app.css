@@ -3,7 +3,7 @@
 /* Custom catppuccin theme */
 @plugin "daisyui/theme" {
     name: "catppuccin";
-    default: true;
+    default: false;
     prefersdark: false;
     color-scheme: dark;
 
@@ -47,7 +47,8 @@
 
 @plugin "daisyui" {
     themes:
-        catppuccin --default,
+        coffee --default,
+        catppuccin,
         light,
         dark,
         cupcake,
@@ -75,7 +76,6 @@
         acid,
         lemonade,
         night,
-        coffee,
         winter,
         dim,
         nord,
