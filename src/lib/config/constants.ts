@@ -1,4 +1,4 @@
-export const APP_VERSION = "1.0.0";
+export const APP_VERSION = "1.0.1";
 
 const LOCAL_STORAGE_PREFIX = "stopwatch";
 export const LOCAL_STORAGE_KEYS = {
