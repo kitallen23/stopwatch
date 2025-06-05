@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://stopwatch.chuggs.net/sitemap.xml
