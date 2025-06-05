@@ -5,19 +5,25 @@
  */
 export function formatTime(ms: number): string {
     const totalSeconds = ms / 1000;
-    const minutes = Math.floor(totalSeconds / 60);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
     const hundredths = Math.floor((seconds * 100) % 100);
 
-    const formattedMinutes = String(minutes);
+    const formattedHours = String(hours);
+    const formattedMinutesShort = String(minutes);
+    const formattedMinutesLong = String(minutes).padStart(2, "0");
     const formattedSecondsShort = String(Math.floor(seconds));
     const formattedSecondsLong = String(Math.floor(seconds)).padStart(2, "0");
     const formattedHundredths = String(hundredths).padStart(2, "0");
 
-    if (minutes > 0) {
-        return `${formattedMinutes}:${formattedSecondsLong}.${formattedHundredths}`;
+    if (hours > 0) {
+        return `${formattedHours}:${formattedMinutesLong}:${formattedSecondsLong}.${formattedHundredths}`;
+    } else if (minutes > 0) {
+        return `${formattedMinutesShort}:${formattedSecondsLong}.${formattedHundredths}`;
+    } else {
+        return `${formattedSecondsShort}.${formattedHundredths}`;
     }
-    return `${formattedSecondsShort}.${formattedHundredths}`;
 }
 
 /**

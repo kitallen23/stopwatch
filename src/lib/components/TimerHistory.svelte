@@ -76,11 +76,13 @@
             {#each paginatedTimerEntries as entry (entry.id)}
                 <li class="list-row items-center p-3">
                     <div class="item-timer-display list-col-grow">
-                        <div>{formatTime(entry.total!)}</div>
+                        <div class="badge badge-primary px-1.5 font-semibold">
+                            {formatTime(entry.total!)}
+                        </div>
                     </div>
                     {#if entry.createdAt}
                         {#key $rerenderKey}
-                            <div class="text-primary/60 text-xs">
+                            <div class="text-base-content dark:text-base-content/60 text-xs">
                                 <div>{formatTimeStampRelativeToNow(entry.createdAt)}</div>
                             </div>
                         {/key}
