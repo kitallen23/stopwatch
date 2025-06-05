@@ -7,6 +7,7 @@
     import KeyboardArrowDown from "virtual:icons/material-symbols-light/keyboard-arrow-down";
     import CheckCircle from "virtual:icons/material-symbols/check-circle";
     import ThemeIndicator from "$lib/components/ThemeIndicator.svelte";
+    import { updateFavicon } from "$lib/favicon";
 
     let currentAppliedTheme = $state("");
 
@@ -22,6 +23,8 @@
                 }
             }
         }
+
+        updateFavicon();
     });
 
     function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
@@ -31,6 +34,7 @@
             document.documentElement.setAttribute("data-theme", theme);
             currentAppliedTheme = theme;
         }
+        updateFavicon();
     }
 </script>
 
