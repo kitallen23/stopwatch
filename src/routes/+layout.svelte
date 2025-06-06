@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import "../app.css";
     import Timer from "virtual:icons/material-symbols/timer";
     import YinYang from "virtual:icons/mdi/yin-yang";
@@ -6,6 +7,24 @@
     import ThemeDropdown from "./ThemeDropdown.svelte";
     import { zenMode } from "$lib/stores/zenMode";
     import { APP_VERSION, GITHUB_REPO_URL, GITHUB_USER_URL } from "$lib/config/constants";
+
+    import {
+        isAnalyticsReady,
+        loadScript,
+        checkIfReady,
+        trackPageView,
+    } from "$lib/stores/analytics";
+
+    onMount(() => {
+        loadScript();
+        return checkIfReady();
+    });
+
+    $effect(() => {
+        if ($isAnalyticsReady) {
+            trackPageView();
+        }
+    });
 
     let { children } = $props();
 

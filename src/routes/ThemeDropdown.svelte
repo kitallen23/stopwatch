@@ -8,6 +8,7 @@
     import CheckCircle from "virtual:icons/material-symbols/check-circle";
     import ThemeIndicator from "$lib/components/ThemeIndicator.svelte";
     import { updateFavicon } from "$lib/favicon";
+    import { isAnalyticsReady, trackEvent } from "$lib/stores/analytics";
 
     let currentAppliedTheme = $state("");
 
@@ -27,6 +28,16 @@
         updateFavicon();
     });
 
+    let hasTrackedPageLoad = $state(false);
+    $effect(() => {
+        if (browser && $isAnalyticsReady && !hasTrackedPageLoad && currentAppliedTheme) {
+            trackEvent("theme__page_load", {
+                theme: currentAppliedTheme || DEFAULT_THEME_IDENTIFIER,
+            });
+            hasTrackedPageLoad = true;
+        }
+    });
+
     function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
         const theme = event.currentTarget.getAttribute("aria-label");
         if (theme) {
@@ -35,6 +46,7 @@
             currentAppliedTheme = theme;
         }
         updateFavicon();
+        trackEvent("theme__set", { theme });
     }
 </script>
 

@@ -13,6 +13,7 @@
         timer,
         deleteTimer,
     } from "$lib/stores/timers";
+    import { trackEvent } from "$lib/stores/analytics";
 
     let isHydrated = $state(false);
     $effect(() => {
@@ -73,6 +74,7 @@
                 entries: [],
             });
             isAddModalOpen = false;
+            trackEvent("timer__add");
         }
     }
 
@@ -111,6 +113,7 @@
                     name: modifyTimerValue,
                 });
                 isModifyModalOpen = false;
+                trackEvent("timer__edit");
             }
         }
     }
@@ -129,6 +132,7 @@
     function handleDeleteTimer() {
         deleteTimer();
         isDeleteModalOpen = false;
+        trackEvent("timer__delete");
     }
 </script>
 

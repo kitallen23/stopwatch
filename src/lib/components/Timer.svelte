@@ -11,6 +11,7 @@
     import { zenMode } from "$lib/stores/zenMode";
     import { addTimerEntry } from "$lib/stores/timers";
     import { formatTime } from "$lib/utils";
+    import { trackEvent } from "$lib/stores/analytics";
 
     let activeStartTime: number | null = $state(null); // Timestamp (ms) when the current active segment started
     let currentTimeDisplay: string = $state("0.00"); // Formatted time for display
@@ -131,12 +132,18 @@
             animationFrameId = null;
         }
 
-        if (addToHistory && timerEntry && timerEntry.times.length > 0) {
+        if (timerEntry && timerEntry.times.length > 0) {
             // Create a plain object copy of timerEntry
             const plainTimerEntry = JSON.parse(JSON.stringify(timerEntry));
 
             const totalTime = calculateTotalElapsedTimeMs();
-            addTimerEntry({ ...plainTimerEntry, total: totalTime });
+
+            if (addToHistory) {
+                addTimerEntry({ ...plainTimerEntry, total: totalTime });
+                trackEvent("timer_entry__add");
+            } else {
+                trackEvent("timer_entry__clear");
+            }
         }
 
         timerEntry = blankTimerEntry();

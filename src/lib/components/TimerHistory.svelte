@@ -12,6 +12,7 @@
     import CommentEdit from "virtual:icons/mdi/comment-edit-outline";
     import WindowClose from "virtual:icons/mdi/window-close";
     import Delete from "virtual:icons/material-symbols/delete-outline";
+    import { trackEvent } from "$lib/stores/analytics";
 
     const PAGE_SIZE = 100;
     const INITIAL_PAGE_SIZE = 5;
@@ -55,6 +56,7 @@
     function onClearTimerHistory() {
         clearTimerEntries();
         isClearModalOpen = false;
+        trackEvent("timer_history__clear");
     }
 </script>
 
@@ -112,7 +114,10 @@
                             <button
                                 class="delete-button btn btn-ghost btn-sm text-primary/60 hover:text-error visible -my-2 h-auto px-2 py-2 sm:invisible"
                                 aria-label="Remove timer entry"
-                                onclick={() => removeTimerEntry(entry.id)}
+                                onclick={() => {
+                                    removeTimerEntry(entry.id);
+                                    trackEvent("timer_entry__remove");
+                                }}
                             >
                                 <Delete />
                             </button>
