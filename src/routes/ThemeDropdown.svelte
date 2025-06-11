@@ -3,6 +3,7 @@
     import { browser } from "$app/environment";
     import { themes } from "$lib";
     import { DEFAULT_THEME_IDENTIFIER, LOCAL_STORAGE_KEYS } from "$lib/config/constants";
+    import { formatHex } from "culori";
 
     import KeyboardArrowDown from "virtual:icons/material-symbols-light/keyboard-arrow-down";
     import CheckCircle from "virtual:icons/material-symbols/check-circle";
@@ -11,6 +12,24 @@
     import { isAnalyticsReady, trackEvent } from "$lib/stores/analytics";
 
     let currentAppliedTheme = $state("");
+
+    function updateThemeColor() {
+        const oklchColor = getComputedStyle(document.documentElement)
+            .getPropertyValue("--color-base-200")
+            .trim();
+
+        if (oklchColor) {
+            try {
+                const hexColor = formatHex(oklchColor);
+                const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                if (metaThemeColor && hexColor) {
+                    metaThemeColor.setAttribute("content", hexColor);
+                }
+            } catch {
+                console.warn("Failed to convert theme color:", oklchColor);
+            }
+        }
+    }
 
     onMount(() => {
         if (browser) {
@@ -23,6 +42,8 @@
                     currentAppliedTheme = themeFromStorage;
                 }
             }
+
+            updateThemeColor();
         }
 
         updateFavicon();
@@ -47,6 +68,7 @@
         }
         updateFavicon();
         trackEvent("theme__set", { theme });
+        updateThemeColor();
     }
 </script>
 
