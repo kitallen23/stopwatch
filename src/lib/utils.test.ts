@@ -22,7 +22,7 @@ describe("formatTime", () => {
 
     it("handles large values", () => {
         expect(formatTime(600000)).toBe("10:00.00");
-        expect(formatTime(3661234)).toBe("61:01.23");
+        expect(formatTime(3661234)).toBe("1:01:01.23");
     });
 });
 
