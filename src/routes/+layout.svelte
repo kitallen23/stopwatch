@@ -69,7 +69,7 @@
 <footer class="footer bg-base-200 text-base-content/60 place-items-end px-2 py-1">
     <aside class="w-full">
         <div class="mx-auto flex w-full max-w-2xl items-center justify-end gap-10 text-xs">
-            <span>app v{APP_VERSION}</span>
+            <span>v{APP_VERSION}</span>
             <div class="flex items-center">
                 <span
                     >made by <a
